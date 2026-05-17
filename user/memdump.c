@@ -60,6 +60,42 @@ main(int argc, char *argv[])
 void
 memdump(char *fmt, char *data)
 {
-  // Your code here.
-
+  while(*fmt != '\0'){
+    switch(*fmt){
+    case 'i':
+      printf("%d\n", (int)((uint)(uchar)data[0] | (uint)(uchar)data[1] << 8 |
+                           (uint)(uchar)data[2] << 16 | (uint)(uchar)data[3] << 24));
+      data += 4;
+      break;
+    case 'p':
+      printf("%lx\n", (uint64)(uchar)data[0] | (uint64)(uchar)data[1] << 8 |
+                       (uint64)(uchar)data[2] << 16 | (uint64)(uchar)data[3] << 24 |
+                       (uint64)(uchar)data[4] << 32 | (uint64)(uchar)data[5] << 40 |
+                       (uint64)(uchar)data[6] << 48 | (uint64)(uchar)data[7] << 56);
+      data += 8;
+      break;
+    case 'h':
+      printf("%d\n", (int)((ushort)(uchar)data[0] | (ushort)(uchar)data[1] << 8));
+      data += 2;
+      break;
+    case 'c':
+      printf("%c\n", *data);
+      data += 1;
+      break;
+    case 's':
+      printf("%s\n", (char *)((uint64)(uchar)data[0] | (uint64)(uchar)data[1] << 8 |
+                              (uint64)(uchar)data[2] << 16 | (uint64)(uchar)data[3] << 24 |
+                              (uint64)(uchar)data[4] << 32 | (uint64)(uchar)data[5] << 40 |
+                              (uint64)(uchar)data[6] << 48 | (uint64)(uchar)data[7] << 56));
+      data += 8;
+      break;
+    case 'S':
+      printf("%s\n", data);
+      while(*data != '\0')
+        data++;
+      data++;
+      break;
+    }
+    fmt++;
+  }
 }
