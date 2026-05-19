@@ -105,5 +105,6 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
 
-  int mask; // use for interpose syscall
+  int mask; // used for interpose syscall
+  char allowed_path[MAXPATH]; // used fot interpose syscall
 };

@@ -135,6 +135,7 @@ syscall(void)
 {
   int num;
   struct proc *p = myproc();
+  char path[MAXPATH];
 
   num = p->trapframe->a7;
 
@@ -142,9 +143,30 @@ syscall(void)
 
     // check if this syscall is interposed
     if(p->mask & (1 << num)){
-      p->trapframe->a0 = -1; // set the return value to -1
-      return ;
-    }
+
+      int interposed = 1;
+      // if it is open or exec, check if its path is allowed_path
+      if(num == SYS_open || num == SYS_exec){
+
+        if(argstr(0, path, MAXPATH) < 0){
+          p->trapframe->a0 = -1;
+          return ;
+        }
+
+
+        if(strncmp(path, p->allowed_path, MAXPATH) == 0){
+          interposed = 0;
+        }
+        else{
+          interposed = 1;
+        }
+      }
+
+      if(interposed){
+        p->trapframe->a0 = -1; // set the return value to -1
+        return ;
+      }
+   }
 
     // Use num to lookup the system call function for num, call it,
     // and store its return value in p->trapframe->a0

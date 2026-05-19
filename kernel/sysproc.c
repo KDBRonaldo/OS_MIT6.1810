@@ -110,11 +110,14 @@ uint64 sys_interpose(void){
   int mask;
   char path[MAXPATH];
 
-  argint(0, &mask); // get the mask parameter
-  if(argstr(1, path, MAXPATH) < 0){ // check if path is valid
+  if(argstr(1, path, MAXPATH) < 0){ // check if path is too long
     return -1;
   }
 
+  strncpy(myproc()->allowed_path, path, strlen(path) + 1); // set allowed_path
+  
+  argint(0, &mask); // get the mask parameter
   myproc()->mask = mask; // set the mask of proc
+
   return 0;
 }

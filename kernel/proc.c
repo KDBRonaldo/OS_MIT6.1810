@@ -272,7 +272,10 @@ kfork(void)
     return -1;
   }
   np->sz = p->sz;
+
+  // copy the variable used for syscall interpose()
   np->mask = p->mask;
+  strncpy(np->allowed_path, p->allowed_path, strlen(p->allowed_path) + 1);
 
   // copy saved user registers.
   *(np->trapframe) = *(p->trapframe);
