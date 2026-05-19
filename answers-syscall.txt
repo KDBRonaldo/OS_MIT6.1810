@@ -1,0 +1,41 @@
+1. Looking at the backtrace output, which function called syscall?
+
+usertrap() called syscall().
+
+2. What is the value of p->trapframe->a7 and what does that value represent?
+
+p->trapframe->a7 is 15, which is SYS_open. It is the system call number
+passed by the user process in register a7. In this case, the init process is
+calling open("console", O_RDWR).
+
+3. What was the previous mode that the CPU was in?
+
+$sstatus was 0x200000022. The SPP bit is 0, so the previous mode was user
+mode.
+
+4. Write down the assembly instruction the kernel is panicing at. Which
+register corresponds to the variable num?
+
+The faulting instruction is:
+
+lw a3,0(zero)
+
+It tries to load a word from address 0 into register a3. Register a3
+corresponds to the local variable num.
+
+5. Confirm that the faulting assembly instruction is the same as the one found
+above. Why does the kernel crash?
+
+GDB stopped at the same instruction:
+
+lw a3,0(zero)
+
+The kernel crashes because this instruction dereferences address 0. Address 0
+is not mapped in the kernel page table, so the load causes a page fault. The
+panic output confirms this: scause=0xd is a load page fault and stval=0x0 is
+the faulting address.
+
+6. What is the name of the process that was running when the kernel paniced?
+What is its process id (pid)?
+
+The process was init, and its pid was 1.
